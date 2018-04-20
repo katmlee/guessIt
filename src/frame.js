@@ -10,21 +10,18 @@ class Frame extends Component {
     this.state = {
       word: 'rat',
       help: 'blah',
-      array: ['dog', 'cat', 'mouse', 'horse', 'wombat', 'koala'],
+      array: ['dog', 'cat', 'mouse', 'horse', 'wombat', 'koala', 'badger', 'fox','bunny', 'armadillo', 'elephant'],
       gyroscopeData: {},
     }
     this.onNext = this.onNext.bind(this);
     this.round = this.round.bind(this);
-    Gyroscope.setUpdateInterval(1000);
+    Gyroscope.setUpdateInterval(2000);
     Gyroscope.addListener((result) => {
       this.setState({gyroscopeData: result});
+      if(result.y >=6){
+        this.onNext();
+      }
     });
-  }
-
-  componentDidUpdate() {
-    // if (this.state.gyroscopeData.y >= 2){
-    //   this.onNext();
-    // }
   }
 
   onNext() {
@@ -54,25 +51,9 @@ class Frame extends Component {
       <Text>Y:{this.round(y)} </Text>
       <Text>Z:{this.round(z)} </Text>
         <Text>{this.state.word}</Text>
-        <Text>{this.state.help}</Text>
       </View>
-      // <View>
-      //   <Text>{this.state.word}</Text>
-      //   <Button title="Next" onPress={this.onNext}/>
-      // </View>
-    );
-  }
+    )}
 }
 
-// _subscribe = () => {
-//   this._subscription = Gyroscope.addListener((result) => {
-//     this.setState({gyroscopeData: result});
-//   });
-// }
-
-// _unsubscribe = () => {
-//   this._subscription && this._subscription.remove();
-//   this._subscription = null;
-// }
 
 export default Frame;
