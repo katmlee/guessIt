@@ -1,7 +1,7 @@
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
-import Frame from './src/frame';
+import Frame from './src/Frame';
 import GyroscopeSensor from './src/gyroscopeFun';
 
 export default class App extends React.Component {

@@ -17,9 +17,21 @@ class Frame extends Component {
     this.round = this.round.bind(this);
     Gyroscope.setUpdateInterval(2000);
     Gyroscope.addListener((result) => {
-      this.setState({gyroscopeData: result});
-      if(result.y >=6){
-        this.onNext();
+      // this.setState({gyroscopeData: result});
+      // if(result.y >=6){
+      //   this.onNext();
+      // }
+      if (Math.abs(result.y) >= Y_AXIS_VAL) {
+        console.log('detected >8 movement ' + this.state.firstMove)
+        if (result.y < 0) {
+          this.setState({ firstMove: result.y });
+          console.log(this.state.firstMove);
+        } else if (this.state.firstMove < 0 && result.y > 0) {
+          console.log('correct');
+          console.log('Y going up ' + result.y)
+          this.setState({ firstMove: 0 });
+          console.log('should have reset ' + this.state.firstMove)
+        }
       }
     });
   }
