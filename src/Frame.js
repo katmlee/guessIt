@@ -25,21 +25,10 @@ class Frame extends Component {
   }
 
   onListen = (result) => {
-    // Tip down
-    if (result.y <= -Y_AXIS_VAL) {
-      this.setState({firstMove: result.y});
-
-    // Tipped down then up
-    } else if(result.y >= Y_AXIS_VAL && this.state.firstMove !== 'empty') {
+    if(Math.abs(result.y) >= Y_AXIS_VAL && this.state.firstMove !== 'empty') {
       this.setState({firstMove: 'empty'});
-
-    // Tipped up
-    } else if(result.y >= Y_AXIS_VAL) {
+    } else if(Math.abs(result.y) >= Y_AXIS_VAL) {
       this.setState({firstMove: result.y});
-
-    // Tipped up then down
-    } else if(result.y <= -Y_AXIS_VAL && this.state.firstMove !== 'empty') {
-      this.setState({firstMove: 'empty'})
     }
   };
 
