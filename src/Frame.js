@@ -11,8 +11,6 @@ class Frame extends Component {
     super(props);
     this.state = {
       wordListIndex: 0,
-      help: 'blah',
-      gyroscopeData: {},
       firstMove: 'empty',
       score: 0,
     };
@@ -38,11 +36,8 @@ class Frame extends Component {
     this.setState({score: this.state.score + 1});
   }
 
-  round(n) {
-    if (!n) {
-      return 0;
-    }
-    return Math.floor(n * 100) / 100;
+  onSkip() {
+    this.setState({wordListIndex: this.state.wordListIndex + 1});
   }
 
   render() {
