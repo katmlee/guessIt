@@ -1,34 +1,23 @@
 import React from 'react';
-import {Text} from 'react-native';
 import Frame from './Frame';
 import {shallow, configure} from 'enzyme';
-import {Gyroscope} from 'expo';
 import Adapter from 'enzyme-adapter-react-16';
 
-configure({ adapter: new Adapter() });
-
-// jest.mock('expo', () => ({
-//   Gyroscope: {
-//     addListener: jest.fn(),
-//     setUpdateInterval: jest.fn(),
-//   }
-// }));
+configure({adapter: new Adapter()});
 
 describe('Guess It App', () => {
   let wrapper;
 
-  describe('#onListen', () => {
+  describe('onListen', () => {
     test('should update state when face is tipped downwards', () => {
       wrapper = shallow(<Frame/>);
       wrapper.instance().onListen({y: -10});
-      wrapper.update();
       expect(wrapper.state('firstMove')).toEqual(-10);
     });
 
     test('should update state when face is tipped upwards', () => {
       wrapper = shallow(<Frame/>);
       wrapper.instance().onListen({y: 10});
-      wrapper.update();
       expect(wrapper.state('firstMove')).toEqual(10);
     });
 
@@ -36,7 +25,6 @@ describe('Guess It App', () => {
       wrapper = shallow(<Frame/>);
       wrapper.setState({firstMove: -10});
       wrapper.instance().onListen({y: 10});
-      wrapper.update();
       expect(wrapper.state('firstMove')).toEqual('empty');
     });
 
@@ -44,8 +32,16 @@ describe('Guess It App', () => {
       wrapper = shallow(<Frame/>);
       wrapper.setState({firstMove: 10});
       wrapper.instance().onListen({y: 10});
-      wrapper.update();
       expect(wrapper.state('firstMove')).toEqual('empty');
     })
+  });
+
+  describe('onNext', () => {
+    test('should update word and score', () => {
+      wrapper.shallow(<Frame/>);
+      wrapper.instance().onNext();
+      expect(wrapper.state('wordListIndex')).toEqual(1);
+      expect(wrapper.state('score')).toEqual(1);
+    });
   });
 });

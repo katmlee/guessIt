@@ -3,17 +3,18 @@ import {Gyroscope} from 'expo';
 import {Text, View} from 'react-native';
 
 const Y_AXIS_VAL = 8;
+const WORD_LIST = ['dog', 'cat', 'mouse', 'horse', 'wombat', 'koala', 'badger', 'fox', 'bunny', 'armadillo', 'elephant'];
 
 class Frame extends Component {
 
   constructor(props) {
     super(props);
     this.state = {
-      word: 'rat',
+      wordListIndex: 0,
       help: 'blah',
-      array: ['dog', 'cat', 'mouse', 'horse', 'wombat', 'koala', 'badger', 'fox', 'bunny', 'armadillo', 'elephant'],
       gyroscopeData: {},
-      firstMove: 'empty'
+      firstMove: 'empty',
+      score: 0,
     };
     this.onNext = this.onNext.bind(this);
     this.round = this.round.bind(this);
@@ -33,28 +34,21 @@ class Frame extends Component {
   };
 
   onNext() {
-    console.log('I am here');
-    this.setState({help: 'im herreeeee'});
-    newArray = this.state.array;
-    newArray.shift();
-    this.setState({
-      word: this.state.array[0],
-      array: newArray,
-    })
+    this.setState({wordListIndex: this.state.wordListIndex + 1});
+    this.setState({score: this.state.score + 1});
   }
 
   round(n) {
     if (!n) {
       return 0;
     }
-
     return Math.floor(n * 100) / 100;
   }
 
   render() {
     return (
     <View>
-      <Text>{this.state.word}</Text>
+      <Text>{WORD_LIST[this.state.wordListIndex]}</Text>
     </View>
     )
   }
