@@ -20,12 +20,12 @@ describe('Guess It App', () => {
 
   describe('onListen', () => {
     test('should update state when face is tipped downwards', () => {
-      wrapper.instance().onListen({y: -10});
+      wrapper.instance().onListen({y: -10}, jest.fn(), jest.fn());
       expect(wrapper.state('firstMove')).toEqual(-10);
     });
 
     test('should update state when face is tipped upwards', () => {
-      wrapper.instance().onListen({y: 10});
+      wrapper.instance().onListen({y: 10}, jest.fn(), jest.fn());
       expect(wrapper.state('firstMove')).toEqual(10);
     });
 
@@ -33,12 +33,16 @@ describe('Guess It App', () => {
       wrapper.setState({firstMove: -10});
       wrapper.instance().onListen({y: 10});
       expect(wrapper.state('firstMove')).toEqual('empty');
+      expect(wrapper.state('wordListIndex')).toEqual(1);
+      expect(wrapper.state('score')).toEqual(1);
     });
 
     test('should reset the state when face is tipped up then down', () => {
       wrapper.setState({firstMove: 10});
-      wrapper.instance().onListen({y: 10});
+      wrapper.instance().onListen({y: -10});
       expect(wrapper.state('firstMove')).toEqual('empty');
+      expect(wrapper.state('wordListIndex')).toEqual(1);
+      expect(wrapper.state('score')).toEqual(0);
     })
   });
 

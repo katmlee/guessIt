@@ -23,8 +23,12 @@ class Frame extends Component {
   }
 
   onListen = (result) => {
-    if (Math.abs(result.y) >= Y_AXIS_VAL && this.state.firstMove !== 'empty') {
+    if (result.y >= Y_AXIS_VAL && this.state.firstMove !== 'empty') {
       this.setState({firstMove: 'empty'});
+      this.onNext();
+    } else if(result.y <= Y_AXIS_VAL && this.state.firstMove !== 'empty') {
+      this.setState({firstMove: 'empty'});
+      this.onSkip();
     } else if (Math.abs(result.y) >= Y_AXIS_VAL) {
       this.setState({firstMove: result.y});
     }
