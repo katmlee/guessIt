@@ -1,8 +1,11 @@
 import React, {Component} from 'react';
 import {Gyroscope} from 'expo';
-import {Text, View, Button} from 'react-native';
+import {Text, View} from 'react-native';
+
+const Y_AXIS_VAL = 8;
 
 class Frame extends Component {
+
   constructor(props) {
     super(props);
     this.state = {
@@ -10,6 +13,7 @@ class Frame extends Component {
       help: 'blah',
       array: ['dog', 'cat', 'mouse', 'horse', 'wombat', 'koala', 'badger', 'fox', 'bunny', 'armadillo', 'elephant'],
       gyroscopeData: {},
+      firstMove: 'empty'
     };
     this.onNext = this.onNext.bind(this);
     this.round = this.round.bind(this);
@@ -18,30 +22,24 @@ class Frame extends Component {
     Gyroscope.addListener((result) => {
       this.onListen(result)
     });
-    console.log("constructor");
   }
 
   onListen = (result) => {
-    // this.setState({gyroscopeData: result});
-    // if(result.y >=6){
-    //   this.onNext();
-    // }
-    // if (Math.abs(result.y) >= Y_AXIS_VAL) {
-    //   console.log('detected >8 movement ' + this.state.firstMove)
-    //   if (result.y < 0) {
-    //     this.setState({ firstMove: result.y });
-    //     console.log(this.state.firstMove);
-    //   } else if (this.state.firstMove < 0 && result.y > 0) {
-    //     console.log('correct');
-    //     console.log('Y going up ' + result.y)
-    //     this.setState({ firstMove: 0 });
-    //     console.log('should have reset ' + this.state.firstMove)
-    //   }
-    // }
-    console.log("onListen");
-    console.log("result=" + result);
-    if (result.y === 42) {
-      this.setState({word: 'Word'});
+    // Tip down
+    if (result.y <= -Y_AXIS_VAL) {
+      this.setState({firstMove: result.y});
+
+    // Tipped down then up
+    } else if(result.y >= Y_AXIS_VAL && this.state.firstMove !== 'empty') {
+      this.setState({firstMove: 'empty'});
+
+    // Tipped up
+    } else if(result.y >= Y_AXIS_VAL) {
+      this.setState({firstMove: result.y});
+
+    // Tipped up then down
+    } else if(result.y <= -Y_AXIS_VAL && this.state.firstMove !== 'empty') {
+      this.setState({firstMove: 'empty'})
     }
   };
 
@@ -65,18 +63,12 @@ class Frame extends Component {
   }
 
   render() {
-    console.log("render");
-    let {x, y, z} = this.state.gyroscopeData;
     return (
     <View>
-      {/*<Text>X:{this.round(x)} </Text>*/}
-      {/*<Text>Y:{this.round(y)} </Text>*/}
-      {/*<Text>Z:{this.round(z)} </Text>*/}
       <Text>{this.state.word}</Text>
     </View>
     )
   }
 }
-
 
 export default Frame;
