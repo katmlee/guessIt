@@ -1,4 +1,5 @@
 import React from 'react';
+import {Text} from 'react-native';
 import Frame from './Frame';
 import {shallow, configure} from 'enzyme';
 import Adapter from 'enzyme-adapter-react-16';
@@ -55,5 +56,24 @@ describe('Guess It App', () => {
       expect(wrapper.state('wordListIndex')).toEqual(1);
       expect(wrapper.state('score')).toEqual(0);
     });
+  });
+
+  describe('render', () => {
+    test('should render correct word', () => {
+      wrapper.setState({
+        wordList: ['katrina', 'michael', 'jessie'],
+        wordListIndex: 2,
+      });
+      expect(wrapper.find(Text).props().children).toEqual('jessie');
+    });
+
+    test('should render score when we have gone through all word values', () => {
+      wrapper.setState({
+        wordList: ['katrina', 'michael', 'jessie'],
+        wordListIndex: 3,
+        score: 2,
+      });
+      expect(wrapper.find(Text).props().children).toEqual('You got 2/3 correct!');
+    })
   });
 });
