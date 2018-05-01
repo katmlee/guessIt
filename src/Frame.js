@@ -2,8 +2,15 @@ import React, {Component} from 'react';
 import {Text, View, StyleSheet} from 'react-native';
 import {Gyroscope, ScreenOrientation} from 'expo';
 
-const Y_AXIS_VAL = 8;
-const GYRO_UPDATE_INTERVAL = 2000;
+const Y_AXIS_VAL = 6;
+const GYRO_UPDATE_INTERVAL = 1000;
+export const ROTATION_STATE = {
+  INITIAL: '',
+  UPDATE: 'update',
+  SKIP: 'skip',
+  NEXT: 'next',
+};
+Object.freeze(ROTATION_STATE);
 
 class Frame extends Component {
 
@@ -12,7 +19,8 @@ class Frame extends Component {
     this.state = {
       wordList: ['dog', 'cat', 'mouse', 'horse', 'wombat', 'dingo'],
       wordListIndex: 0,
-      prevMove: 0,
+      prevGyroReading: 0,
+      prevMove: ROTATION_STATE.INITIAL,
       score: 0,
     };
     this.onListen = this.onListen.bind(this);
@@ -24,30 +32,41 @@ class Frame extends Component {
   }
 
   onListen = (result) => {
-    if (result.y >= Y_AXIS_VAL && this.state.prevMove < 0) {
-      console.log('next');
+    const {prevMove, prevGyroReading} = this.state;
+    if (result.y >= Y_AXIS_VAL && prevGyroReading < 0 && prevMove === ROTATION_STATE.UPDATE) {
+      console.log('next; ' + ' prevGyroReading=' + prevGyroReading + ' result=' + result.y);
       this.onNext();
-    } else if (result.y <= -Y_AXIS_VAL && this.state.prevMove > 0) {
-      console.log('skip');
+    } else if (result.y <= -Y_AXIS_VAL && prevGyroReading > 0 && prevMove === ROTATION_STATE.UPDATE) {
+      console.log('skip; ' + ' prevGyroReading=' + this.state.prevGyroReading + ' result=' + result.y);
       this.onSkip();
-    } else if (Math.abs(result.y) >= Y_AXIS_VAL) {
-      this.setState({prevMove: result.y});
+    } else if (Math.abs(result.y) >= Y_AXIS_VAL && prevMove !== ROTATION_STATE.UPDATE) {
+      console.log('update; ' + ' prevGyroReading=' + prevGyroReading + ' result=' + result.y);
+      this.setState({
+        prevGyroReading: result.y,
+        prevMove: ROTATION_STATE.UPDATE,
+      });
     }
   };
 
   onSkip() {
-    this.setState({
-      prevMove: 0,
-      wordListIndex: this.state.wordListIndex + 1,
-    });
+    if(this.state.wordListIndex < this.state.wordList.length) {
+      this.setState({
+        prevGyroReading: 0,
+        wordListIndex: this.state.wordListIndex + 1,
+        prevMove: ROTATION_STATE.SKIP,
+      });
+    }
   }
 
   onNext() {
-    this.setState({
-      prevMove: 0,
-      wordListIndex: this.state.wordListIndex + 1,
-      score: this.state.score + 1,
-    });
+    if(this.state.wordListIndex < this.state.wordList.length) {
+      this.setState({
+        prevGyroReading: 0,
+        wordListIndex: this.state.wordListIndex + 1,
+        score: this.state.score + 1,
+        prevMove: ROTATION_STATE.NEXT,
+      });
+    }
   }
 
   render() {
