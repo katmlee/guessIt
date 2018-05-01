@@ -1,47 +1,41 @@
 import React, {Component} from 'react';
 import {Gyroscope} from 'expo';
 import {Text, View, StyleSheet} from 'react-native';
+import {Gyroscope, ScreenOrientation} from 'expo';
+import {Text, View, StyleSheet} from 'react-native';
 
-const Y_AXIS_VAL = 8;
+const Y_AXIS_VAL = 9;
+const GYRO_UPDATE_INTERVAL = 2000;
 
 class Frame extends Component {
 
   constructor(props) {
     super(props);
     this.state = {
-      wordList: ['dog', 'cat', 'mouse', 'horse', 'wombat', 'koala', 'badger', 'fox', 'bunny', 'armadillo', 'elephant'],
+      wordList: ['dog', 'cat', 'mouse', 'horse', 'wombat', 'dingo'],
       wordListIndex: 0,
-      firstMove: 'empty',
+      prevMove: 0,
       score: 0,
     };
-    this.onNext = this.onNext.bind(this);
     this.onListen = this.onListen.bind(this);
-    Gyroscope.setUpdateInterval(2000);
+    Gyroscope.setUpdateInterval(GYRO_UPDATE_INTERVAL);
     Gyroscope.addListener((result) => {
       this.onListen(result, this.onNext, this.onSkip)
     });
+    ScreenOrientation.allow(ScreenOrientation.Orientation.LANDSCAPE_RIGHT);
   }
 
   onListen = (result) => {
-    if (result.y >= Y_AXIS_VAL && this.state.firstMove !== 'empty') {
-      this.setState({firstMove: 'empty'});
-      this.onNext();
-    } else if(result.y <= Y_AXIS_VAL && this.state.firstMove !== 'empty') {
-      this.setState({firstMove: 'empty'});
-      this.onSkip();
-    } else if (Math.abs(result.y) >= Y_AXIS_VAL) {
-      this.setState({firstMove: result.y});
+    if(result.y <= -Y_AXIS_VAL) {
+      this.setState({prevMove: result.y});
+    } else if(result.y >= Y_AXIS_VAL) {
+      this.setState({
+        prevMove: 0,
+        wordListIndex: this.state.wordListIndex + 1,
+        score: this.state.score + 1,
+      });
     }
   };
-
-  onNext() {
-    this.setState({wordListIndex: this.state.wordListIndex + 1});
-    this.setState({score: this.state.score + 1});
-  }
-
-  onSkip() {
-    this.setState({wordListIndex: this.state.wordListIndex + 1});
-  }
 
   render() {
     const {wordList, wordListIndex} = this.state;

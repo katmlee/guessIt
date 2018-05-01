@@ -13,51 +13,39 @@ describe('Guess It App', () => {
     wrapper = shallow(<Frame/>);
     wrapper.setState({
       wordListIndex: 0,
-      firstMove: 'empty',
+      prevMove: 0,
       score: 0,
     })
   });
 
   describe('onListen', () => {
-    test('should update state when face is tipped downwards', () => {
-      wrapper.instance().onListen({y: -10}, jest.fn(), jest.fn());
-      expect(wrapper.state('firstMove')).toEqual(-10);
-    });
-
-    test('should update state when face is tipped upwards', () => {
-      wrapper.instance().onListen({y: 10}, jest.fn(), jest.fn());
-      expect(wrapper.state('firstMove')).toEqual(10);
-    });
-
-    test('should reset the state when face is tipped down then up', () => {
-      wrapper.setState({firstMove: -10});
-      wrapper.instance().onListen({y: 10});
-      expect(wrapper.state('firstMove')).toEqual('empty');
-      expect(wrapper.state('wordListIndex')).toEqual(1);
-      expect(wrapper.state('score')).toEqual(1);
-    });
-
-    test('should reset the state when face is tipped up then down', () => {
-      wrapper.setState({firstMove: 10});
+    test('should update prevMove in state when face is tipped downwards', () => {
       wrapper.instance().onListen({y: -10});
-      expect(wrapper.state('firstMove')).toEqual('empty');
-      expect(wrapper.state('wordListIndex')).toEqual(1);
-      expect(wrapper.state('score')).toEqual(0);
-    })
-  });
+      expect(wrapper.state('prevMove')).toEqual(-10);
+    });
 
-  describe('onNext', () => {
-    test('should update word and score', () => {
-      wrapper.instance().onNext();
+    test('should not update prevMove when gyro reading is not large enough', () => {
+      wrapper.instance().onListen({y: -4});
+      expect(wrapper.state('prevMove')).toEqual(0);
+    });
+
+    test('should update prevMove, index and score in state when face is tipped downwards then upwards', () => {
+      wrapper.setState({
+        prevMove: -10,
+      });
+      wrapper.instance().onListen({y: 10});
+      expect(wrapper.state('prevMove')).toEqual(0);
       expect(wrapper.state('wordListIndex')).toEqual(1);
       expect(wrapper.state('score')).toEqual(1);
     });
-  });
 
-  describe('onSkip', () => {
-    test('should update word but not the score', () => {
-      wrapper.instance().onSkip();
-      expect(wrapper.state('wordListIndex')).toEqual(1);
+    test('should not update state when face tipped downwards but upward tip reading is not large enough', () => {
+      wrapper.setState({
+        prevMove: -10,
+      });
+      wrapper.instance().onListen({y: 4});
+      expect(wrapper.state('prevMove')).toEqual(-10);
+      expect(wrapper.state('wordListIndex')).toEqual(0);
       expect(wrapper.state('score')).toEqual(0);
     });
   });
