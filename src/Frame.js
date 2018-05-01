@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import {Text, View, StyleSheet} from 'react-native';
 import {Gyroscope, ScreenOrientation} from 'expo';
 
-const Y_AXIS_VAL = 9;
+const Y_AXIS_VAL = 8;
 const GYRO_UPDATE_INTERVAL = 2000;
 
 class Frame extends Component {
@@ -24,10 +24,10 @@ class Frame extends Component {
   }
 
   onListen = (result) => {
-    if (result.y >= Y_AXIS_VAL && this.state.prevMove !== 0) {
+    if (result.y >= Y_AXIS_VAL && this.state.prevMove < 0) {
       console.log('next');
       this.onNext();
-    } else if(result.y <= -Y_AXIS_VAL && this.state.prevMove !== 0) {
+    } else if (result.y <= -Y_AXIS_VAL && this.state.prevMove > 0) {
       console.log('skip');
       this.onSkip();
     } else if (Math.abs(result.y) >= Y_AXIS_VAL) {

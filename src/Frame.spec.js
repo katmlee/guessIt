@@ -63,6 +63,26 @@ describe('Guess It App', () => {
       expect(wrapper.state('wordListIndex')).toEqual(1);
       expect(wrapper.state('score')).toEqual(0);
     });
+
+    test('should not state when gyro registers 2 consecutive positive movements', () => {
+      wrapper.setState({
+        prevMove: 10,
+      });
+      wrapper.instance().onListen({y: 12});
+      expect(wrapper.state('prevMove')).toEqual(12);
+      expect(wrapper.state('wordListIndex')).toEqual(0);
+      expect(wrapper.state('score')).toEqual(0);
+    });
+
+    test('should not state when gyro registers 2 consecutive negative movements', () => {
+      wrapper.setState({
+        prevMove: -10,
+      });
+      wrapper.instance().onListen({y: -12});
+      expect(wrapper.state('prevMove')).toEqual(-12);
+      expect(wrapper.state('wordListIndex')).toEqual(0);
+      expect(wrapper.state('score')).toEqual(0);
+    });
   });
 
   describe('render', () => {
