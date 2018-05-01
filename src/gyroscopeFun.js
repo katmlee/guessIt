@@ -31,7 +31,7 @@ export default class GyroscopeSensor extends React.Component {
   }
 
   _slow = () => {
-    Gyroscope.setUpdateInterval(1000);
+    Gyroscope.setUpdateInterval(500);
   }
 
   _fast = () => {

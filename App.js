@@ -1,7 +1,7 @@
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import {StyleSheet, Text, View} from 'react-native';
 
-import Frame from './src/frame';
+import Frame from './src/Frame';
 import GyroscopeSensor from './src/gyroscopeFun';
 
 export default class App extends React.Component {
@@ -11,6 +11,7 @@ export default class App extends React.Component {
       toggledOn: true,
     }
   }
+
   componentDidMount() {
     this.interval = setInterval(() => {
       this.setState({toggledOn: false});
@@ -23,11 +24,10 @@ export default class App extends React.Component {
 
   render() {
     return (
-      <View style={styles.container}>
-        {/* {this.state.toggledOn? <Frame />: <Text> The End </Text>} */}
-        {/* <GyroscopeSensor /> */}
+    <View style={styles.container}>
+      {/*<GyroscopeSensor/>*/}
       <Frame />
-      </View>
+    </View>
     );
   }
 }
