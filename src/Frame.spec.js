@@ -48,6 +48,21 @@ describe('Guess It App', () => {
       expect(wrapper.state('wordListIndex')).toEqual(0);
       expect(wrapper.state('score')).toEqual(0);
     });
+
+    test('should update prevMove in state when face is tipped upwards', () => {
+      wrapper.instance().onListen({y: 10});
+      expect(wrapper.state('prevMove')).toEqual(10);
+    });
+
+    test('should update prevMove, index in state when face is tipped upwards then downwards', () => {
+      wrapper.setState({
+        prevMove: 10,
+      });
+      wrapper.instance().onListen({y: -10});
+      expect(wrapper.state('prevMove')).toEqual(0);
+      expect(wrapper.state('wordListIndex')).toEqual(1);
+      expect(wrapper.state('score')).toEqual(0);
+    });
   });
 
   describe('render', () => {

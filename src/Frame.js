@@ -1,8 +1,6 @@
 import React, {Component} from 'react';
-import {Gyroscope} from 'expo';
 import {Text, View, StyleSheet} from 'react-native';
 import {Gyroscope, ScreenOrientation} from 'expo';
-import {Text, View, StyleSheet} from 'react-native';
 
 const Y_AXIS_VAL = 9;
 const GYRO_UPDATE_INTERVAL = 2000;
@@ -26,16 +24,31 @@ class Frame extends Component {
   }
 
   onListen = (result) => {
-    if(result.y <= -Y_AXIS_VAL) {
+    if (result.y >= Y_AXIS_VAL && this.state.prevMove !== 0) {
+      console.log('next');
+      this.onNext();
+    } else if(result.y <= -Y_AXIS_VAL && this.state.prevMove !== 0) {
+      console.log('skip');
+      this.onSkip();
+    } else if (Math.abs(result.y) >= Y_AXIS_VAL) {
       this.setState({prevMove: result.y});
-    } else if(result.y >= Y_AXIS_VAL) {
-      this.setState({
-        prevMove: 0,
-        wordListIndex: this.state.wordListIndex + 1,
-        score: this.state.score + 1,
-      });
     }
   };
+
+  onSkip() {
+    this.setState({
+      prevMove: 0,
+      wordListIndex: this.state.wordListIndex + 1,
+    });
+  }
+
+  onNext() {
+    this.setState({
+      prevMove: 0,
+      wordListIndex: this.state.wordListIndex + 1,
+      score: this.state.score + 1,
+    });
+  }
 
   render() {
     const {wordList, wordListIndex} = this.state;
