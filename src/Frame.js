@@ -2,8 +2,14 @@ import React, {Component} from 'react';
 import {Text, View, StyleSheet} from 'react-native';
 import {Gyroscope, ScreenOrientation} from 'expo';
 
-export const Y_AXIS_VAL = 6;
 const GYRO_UPDATE_INTERVAL = 1000;
+export const Y_AXIS_VAL = 6;
+export const ROTATION_STATE = {
+  INITIAL: '',
+  UPDATE: 'update',
+  SKIP: 'skip',
+  NEXT: 'next',
+};
 
 class Frame extends Component {
 
@@ -14,6 +20,7 @@ class Frame extends Component {
       wordListIndex: 0,
       prevGyroReading: 0,
       score: 0,
+      prevRotation: ROTATION_STATE.INITIAL,
     };
     this.onListen = this.onListen.bind(this);
     Gyroscope.setUpdateInterval(GYRO_UPDATE_INTERVAL);
@@ -24,16 +31,19 @@ class Frame extends Component {
   }
 
   onListen = (result) => {
-    const {prevGyroReading, wordListIndex, wordList, score} = this.state;
-    if (prevGyroReading >= Y_AXIS_VAL && result.y <= -Y_AXIS_VAL) {
+    const {prevGyroReading, wordListIndex, wordList, score, prevRotation} = this.state;
+    if (prevGyroReading >= Y_AXIS_VAL && result.y <= -Y_AXIS_VAL && prevRotation === ROTATION_STATE.UPDATE) {
       console.log('skip');
       this.onSkip();
-    } else if (prevGyroReading <= -Y_AXIS_VAL && result.y >= Y_AXIS_VAL && wordListIndex < wordList.length) {
+    } else if (prevGyroReading <= -Y_AXIS_VAL && result.y >= Y_AXIS_VAL && wordListIndex < wordList.length && prevRotation === ROTATION_STATE.UPDATE) {
       console.log('next, score = ' + score);
       this.onNext();
-    } else if (Math.abs(result.y) >= Y_AXIS_VAL) {
+    } else if (Math.abs(result.y) >= Y_AXIS_VAL && prevRotation !== ROTATION_STATE.UPDATE) {
       console.log('update');
-      this.setState({prevGyroReading: result.y});
+      this.setState({
+        prevRotation: ROTATION_STATE.UPDATE,
+        prevGyroReading: result.y,
+      });
     }
   };
 
@@ -41,6 +51,7 @@ class Frame extends Component {
     this.setState({
       wordListIndex: this.state.wordListIndex + 1,
       prevGyroReading: 0,
+      prevRotation: ROTATION_STATE.SKIP,
     });
   }
 
@@ -49,6 +60,7 @@ class Frame extends Component {
       wordListIndex: this.state.wordListIndex + 1,
       prevGyroReading: 0,
       score: this.state.score + 1,
+      prevRotation: ROTATION_STATE.NEXT,
     });
   }
 
