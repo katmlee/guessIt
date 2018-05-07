@@ -24,11 +24,12 @@ class Frame extends Component {
   }
 
   onListen = (result) => {
-    if (this.state.prevGyroReading >= Y_AXIS_VAL && result.y <= -Y_AXIS_VAL) {
+    const {prevGyroReading, wordListIndex, wordList, score} = this.state;
+    if (prevGyroReading >= Y_AXIS_VAL && result.y <= -Y_AXIS_VAL) {
       console.log('skip');
       this.onSkip();
-    } else if (this.state.prevGyroReading <= -Y_AXIS_VAL && result.y >= Y_AXIS_VAL) {
-      console.log('next, score = ' + this.state.score);
+    } else if (prevGyroReading <= -Y_AXIS_VAL && result.y >= Y_AXIS_VAL && wordListIndex < wordList.length) {
+      console.log('next, score = ' + score);
       this.onNext();
     } else if (Math.abs(result.y) >= Y_AXIS_VAL) {
       console.log('update');
@@ -52,10 +53,14 @@ class Frame extends Component {
   }
 
   render() {
-    const {wordList, wordListIndex} = this.state;
+    const {wordList, wordListIndex, score} = this.state;
+    let text = wordList[wordListIndex];
+    if(wordListIndex > wordList.length - 1) {
+      text = 'You got ' + score + '/' + wordList.length + ' correct!';
+    }
     return (
     <View>
-      <Text style={styles.textStyle}>{wordList[wordListIndex]}</Text>
+      <Text style={styles.textStyle}>{text}</Text>
     </View>
     )
   }

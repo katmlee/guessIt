@@ -49,6 +49,17 @@ describe('Guess It App', () => {
       expect(wrapper.state('wordListIndex')).toEqual(1);
       expect(wrapper.state('score')).toEqual(1);
     });
+
+    test('should not update score if we have reached the end of the word list', () => {
+      wrapper.setState({
+        prevGyroReading: -(Y_AXIS_VAL + 1),
+        wordList: ['cat', 'dog', 'koala', 'dingo', 'horse', 'monkey'],
+        wordListIndex: 6,
+        score: 2,
+      });
+      wrapper.instance().onListen({y: Y_AXIS_VAL + 1});
+      expect(wrapper.state('score')).toEqual(2);
+    });
   });
 
   describe('render', () => {
@@ -58,6 +69,15 @@ describe('Guess It App', () => {
         wordListIndex: 2,
       });
       expect(wrapper.find(Text).props().children).toEqual('koala');
+    });
+
+    test('should render score when reach the end of the word list', () => {
+      wrapper.setState({
+        wordList: ['cat', 'dog', 'koala', 'monkey'],
+        wordListIndex: 4,
+        score: 2,
+      });
+      expect(wrapper.find(Text).props().children).toEqual('You got 2/4 correct!');
     });
   });
 });
