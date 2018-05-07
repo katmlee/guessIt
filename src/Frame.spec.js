@@ -15,6 +15,7 @@ describe('Guess It App', () => {
       wordList: ['cat', 'dog', 'koala', 'dingo', 'horse', 'monkey'],
       wordListIndex: 0,
       prevGyroReading: 0,
+      score: 0,
     });
   });
 
@@ -36,6 +37,17 @@ describe('Guess It App', () => {
       wrapper.instance().onListen({y: -(Y_AXIS_VAL + 1)});
       expect(wrapper.state('prevGyroReading')).toEqual(0);
       expect(wrapper.state('wordListIndex')).toEqual(1);
+      expect(wrapper.state('score')).toEqual(0);
+    });
+
+    test('should update wordListIndex, score and prevGyroReading when face is tipped downwards then up', () => {
+      wrapper.setState({
+        prevGyroReading: -(Y_AXIS_VAL + 1),
+      });
+      wrapper.instance().onListen({y: Y_AXIS_VAL + 1});
+      expect(wrapper.state('prevGyroReading')).toEqual(0);
+      expect(wrapper.state('wordListIndex')).toEqual(1);
+      expect(wrapper.state('score')).toEqual(1);
     });
   });
 

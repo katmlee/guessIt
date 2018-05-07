@@ -13,6 +13,7 @@ class Frame extends Component {
       wordList: ['cat', 'dog', 'koala', 'dingo', 'horse', 'monkey'],
       wordListIndex: 0,
       prevGyroReading: 0,
+      score: 0,
     };
     this.onListen = this.onListen.bind(this);
     Gyroscope.setUpdateInterval(GYRO_UPDATE_INTERVAL);
@@ -23,15 +24,32 @@ class Frame extends Component {
   }
 
   onListen = (result) => {
-    if(this.state.prevGyroReading >= Y_AXIS_VAL && result.y <= -Y_AXIS_VAL) {
-      this.setState({
-        wordListIndex: this.state.wordListIndex + 1,
-        prevGyroReading: 0,
-      });
+    if (this.state.prevGyroReading >= Y_AXIS_VAL && result.y <= -Y_AXIS_VAL) {
+      console.log('skip');
+      this.onSkip();
+    } else if (this.state.prevGyroReading <= -Y_AXIS_VAL && result.y >= Y_AXIS_VAL) {
+      console.log('next, score = ' + this.state.score);
+      this.onNext();
     } else if (Math.abs(result.y) >= Y_AXIS_VAL) {
+      console.log('update');
       this.setState({prevGyroReading: result.y});
     }
   };
+
+  onSkip() {
+    this.setState({
+      wordListIndex: this.state.wordListIndex + 1,
+      prevGyroReading: 0,
+    });
+  }
+
+  onNext() {
+    this.setState({
+      wordListIndex: this.state.wordListIndex + 1,
+      prevGyroReading: 0,
+      score: this.state.score + 1,
+    });
+  }
 
   render() {
     const {wordList, wordListIndex} = this.state;
