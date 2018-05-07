@@ -10,7 +10,9 @@ class Frame extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      gyroReading: 0,
+      wordList: ['cat', 'dog', 'koala', 'dingo', 'horse', 'monkey'],
+      wordListIndex: 0,
+      prevGyroReading: 0,
     };
     this.onListen = this.onListen.bind(this);
     Gyroscope.setUpdateInterval(GYRO_UPDATE_INTERVAL);
@@ -21,16 +23,21 @@ class Frame extends Component {
   }
 
   onListen = (result) => {
-    if (result.y >= Y_AXIS_VAL) {
-      this.setState({gyroReading: result.y});
-      console.log('tipped upwards');
+    if(this.state.prevGyroReading >= Y_AXIS_VAL && result.y <= -Y_AXIS_VAL) {
+      this.setState({
+        wordListIndex: this.state.wordListIndex + 1,
+        prevGyroReading: 0,
+      });
+    } else if (Math.abs(result.y) >= Y_AXIS_VAL) {
+      this.setState({prevGyroReading: result.y});
     }
   };
 
   render() {
+    const {wordList, wordListIndex} = this.state;
     return (
     <View>
-      <Text style={styles.textStyle}>GuessIt</Text>
+      <Text style={styles.textStyle}>{wordList[wordListIndex]}</Text>
     </View>
     )
   }
